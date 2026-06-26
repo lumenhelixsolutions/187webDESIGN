@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   Design tokens — the single source of visual truth (skill principle #4).
+   Colors are space-separated RGB channels so Tailwind's <alpha-value> works,
+   e.g. `bg-accent/10`. The palette is a deliberate "warm blueprint": paper +
+   ink + one electric-blue accent — chosen to avoid the templated AI defaults
+   the skill warns about (cream+serif+terracotta / near-black+acid-green).
+   ========================================================================== */
+:root {
+  --bg: 250 250 247; /* warm paper */
+  --surface: 255 255 255;
+  --ink: 17 19 26; /* deep slate near-black */
+  --muted: 91 97 112;
+  --line: 221 219 210; /* warm hairline / blueprint rule */
+
+  --accent: 36 64 230; /* electric blueprint blue */
+  --accent-ink: 255 255 255; /* text on accent (≈8:1 contrast) */
+  --accent-soft: 232 236 255;
+
+  --success: 22 122 84;
+  --danger: 200 38 56;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+
+/* ---------------------------------------------------------------- base ---- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* clears the sticky header on anchor jumps */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--ink));
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, on-brand focus for every interactive element (a11y, skill #8). */
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background-color: rgb(var(--accent) / 0.18);
+  }
+}
+
+/* ----------------------------------------------------------- components --- */
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .container-x {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Section eyebrow: small, tracked, accent — with a leading rule tick. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display), sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(var(--accent));
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.5rem;
+    height: 1px;
+    background: rgb(var(--accent));
+  }
+
+  /* Faint measured grid for the hero — the signature "blueprint" motif. */
+  .blueprint {
+    background-image:
+      linear-gradient(rgb(var(--line) / 0.7) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--line) / 0.7) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: radial-gradient(115% 85% at 50% 0%, #000 38%, transparent 82%);
+    mask-image: radial-gradient(115% 85% at 50% 0%, #000 38%, transparent 82%);
+  }
+}
+
+/* ------------------------------------------------------------ utilities --- */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* ----------------------------------------------------- motion (skill #6) -- */
+/* Scroll-reveal: invisible until observed, then eased in. Transform/opacity
+   only, so it never causes layout shift (CLS). */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero headline load-in. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.55em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scoring-lens bars grow to their weight when their group scrolls into view. */
+.lens-bar {
+  width: 0;
+  transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible .lens-bar {
+  width: var(--w);
+}
+
+/* The whole point of motion: it must yield to user preference. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .lens-bar {
+    width: var(--w);
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
