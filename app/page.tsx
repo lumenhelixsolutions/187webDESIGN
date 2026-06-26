@@ -4,7 +4,6 @@ import { Reveal } from "@/components/Reveal";
 import { ScoringLens } from "@/components/ScoringLens";
 import { LeadForm } from "@/components/LeadForm";
 import { ButtonLink } from "@/components/Button";
-import { safeLeadCount } from "@/lib/db";
 import {
   principles,
   workflow,
@@ -13,14 +12,17 @@ import {
   siteConfig,
 } from "@/lib/content";
 
-// Statically rendered, revalidated periodically. Safe without a database:
-// safeLeadCount() returns null at build and the page renders fine.
-export const revalidate = 300;
-
 const checklistHref = `${siteConfig.repo}/blob/main/.claude/skills/187webdesign/references/CHECKLIST.md`;
 
 export default async function HomePage() {
-  const leadCount = await safeLeadCount();
+  // Social-proof count comes from the database in the full-stack build. The
+  // static GitHub Pages export has no server, so webpack drops this branch —
+  // and the Prisma import with it — when NEXT_PUBLIC_STATIC_EXPORT is set.
+  let leadCount: number | null = null;
+  if (process.env.NEXT_PUBLIC_STATIC_EXPORT !== "true") {
+    const { safeLeadCount } = await import("@/lib/db");
+    leadCount = await safeLeadCount();
+  }
 
   return (
     <>

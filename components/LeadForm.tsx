@@ -23,6 +23,16 @@ export function LeadForm() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    // The static GitHub Pages export has no /api route — acknowledge client-side
+    // instead of firing a fetch that would 404 on a static host.
+    if (process.env.NEXT_PUBLIC_STATIC_EXPORT === "true") {
+      setStatus("success");
+      setMessage("Thanks! This is the static showcase, so nothing was stored — clone the repo to run the live API.");
+      setEmail("");
+      return;
+    }
+
     setStatus("submitting");
     setMessage("");
     try {

@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
+// Pre-render at build time so the card works under `output: export` (GitHub Pages).
+export const dynamic = "force-static";
 export const alt = "187WEBdesign — Make killer websites.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
