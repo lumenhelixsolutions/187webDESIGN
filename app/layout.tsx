@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
 import { siteConfig } from "@/lib/content";
 
 const fontSans = Inter({
@@ -43,7 +41,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${fontSans.variable} ${fontDisplay.variable} antialiased`}>
+      <body
+        className={`${fontSans.variable} ${fontDisplay.variable} bg-[#060713] text-[#ECEDF7] antialiased`}
+      >
         {/* Keep scroll-revealed content visible when JavaScript is disabled. */}
         <noscript>
           <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
@@ -51,14 +51,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-sm focus:bg-ink focus:px-4 focus:py-2 focus:text-bg"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-sm focus:bg-white focus:px-4 focus:py-2 focus:text-[#060713]"
         >
           Skip to content
         </a>
 
-        <SiteHeader />
         <main id="main">{children}</main>
-        <SiteFooter />
       </body>
     </html>
   );
